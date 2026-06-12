@@ -1,0 +1,12 @@
+# MATLAB artefacts
+*.asv
+*.mex*
+slprj/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+Thumbs.db
+.DS_Store
