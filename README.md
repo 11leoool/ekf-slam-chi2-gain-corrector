@@ -6,6 +6,10 @@ MATLAB simulation code, Monte Carlo results, and figure-generation scripts for t
 
 The paper proposes a closed-form Kalman-gain corrector for EKF-SLAM: at each update, the normalised innovation squared (NIS) over visible landmarks is compared against a chi-squared gate, and when it fires the gain is scaled by `s = clamp(1/chi2_global, 0.15, 1)`. No noise-statistics estimation, no sliding window, no warm-up, no training data. An estimation-free extension reuses the same statistic to widen the data-association gate ("Proposed (kappa)"). The evaluation covers four simulation regimes (stationary, non-stationary, short-trajectory, and a realistic 50-landmark setting with nearest-neighbour data association), a constant-gain ablation that discloses the benchmark's structural bias toward gain reduction, and a physically modelled rain scenario (Goodin lidar-degradation model) probing where gated adaptivity beats any fixed gain scale and where it correctly stands down.
 
+![Chi-squared gated gain correction under non-stationary noise](media/corrector_animation.gif)
+
+*One representative non-stationary trial (Regime II, seed 7): the true measurement noise jumps by a factor alpha of 1 -> 5 -> 1 -> 3 (shaded segments in the lower panel). The chi-squared statistic reacts within a step, the gate engages exactly inside the mismatch segments (orange dots), and the corrected filter (blue) stays close to the true path while the nominal EKF (orange) over-trusts its noisy measurements. Position RMSE on this trial: nominal 0.536 m, corrected 0.285 m; the paper reports the full n = 100 statistics. Regenerate with `media/make_readme_animation.m`.*
+
 ## Requirements
 
 - MATLAB (tested on a recent release) with the **Statistics and Machine Learning Toolbox** (`chi2inv`, `signrank`, `tinv`)
