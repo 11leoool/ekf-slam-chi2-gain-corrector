@@ -20,7 +20,10 @@ alpha_schedule(301:400) = 3;
 [waypoints, controls] = generate_trajectory('circular', T, dt, struct());
 landmarks = generate_landmarks(3, waypoints, 'ring');
 
-SEED = 7;
+% Seed 14 is the median-improvement trial of the paper's 100-seed Regime II
+% run (21.1% vs the 20.5% median, 23.2% mean) -- chosen so the animation
+% shows AVERAGE behaviour, not a favourable draw.
+SEED = 14;
 rng(SEED, 'twister');
 sim = simulate_trajectory_nonstationary(waypoints, controls, landmarks, ...
     Q_nominal, R_nominal, alpha_schedule, 'symmetric', scfg);

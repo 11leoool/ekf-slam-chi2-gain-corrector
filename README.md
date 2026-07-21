@@ -8,7 +8,7 @@ The paper proposes a closed-form Kalman-gain corrector for EKF-SLAM: at each upd
 
 ![Chi-squared gated gain correction under non-stationary noise](media/corrector_animation.gif)
 
-*One representative non-stationary trial (Regime II, seed 7): the true measurement noise jumps by a factor alpha of 1 -> 5 -> 1 -> 3 (shaded segments in the lower panel). The chi-squared statistic reacts within a step, the gate engages exactly inside the mismatch segments (orange dots), and the corrected filter (blue) stays close to the true path while the nominal EKF (orange) over-trusts its noisy measurements. Position RMSE on this trial: nominal 0.536 m, corrected 0.285 m; the paper reports the full n = 100 statistics. Regenerate with `media/make_readme_animation.m`.*
+*The median non-stationary trial (Regime II, seed 14 — the median-improvement seed of the paper's 100-trial run, deliberately not a favourable draw): the true measurement noise jumps by a factor alpha of 1 -> 5 -> 1 -> 3 (shaded segments in the lower panel). The chi-squared statistic reacts within a step, the gate engages exactly inside the mismatch segments (orange dots), and the corrected filter (blue) stays closer to the true path while the nominal EKF (orange) over-trusts its noisy measurements. Position RMSE on this trial: nominal 0.267 m, corrected 0.211 m (21% — the 100-seed mean is 23%). Regenerate with `media/make_readme_animation.m`.*
 
 ## Requirements
 
