@@ -10,6 +10,27 @@ The paper proposes a closed-form Kalman-gain corrector for EKF-SLAM: at each upd
 
 *The median non-stationary trial (Regime II, seed 14 — the median-improvement seed of the paper's 100-trial run, deliberately not a favourable draw): the true measurement noise jumps by a factor alpha of 1 -> 5 -> 1 -> 3 (shaded segments in the lower panel). The chi-squared statistic reacts within a step, the gate engages exactly inside the mismatch segments (orange dots), and the corrected filter (blue) stays closer to the true path while the nominal EKF (orange) over-trusts its noisy measurements. Position RMSE on this trial: nominal 0.267 m, corrected 0.211 m (21% — the 100-seed mean is 23%). Regenerate with `media/make_readme_animation.m`.*
 
+<details>
+<summary><b>Animation: exact simulation conditions</b> (click to expand)</summary>
+
+Both filters run on the **identical noise realisation** (`rng(14,'twister')`), so the comparison is paired. The setup replicates the paper's Regime II exactly.
+
+| Item | Value | Plain meaning |
+|---|---|---|
+| Robot and path | Unicycle model, commanded circle (radius ≈ 5 m), T = 400 steps, dt = 0.05 s | The robot drives laps of a circle for 20 simulated seconds |
+| Landmarks and sensor | 3 landmarks on a ring; range + bearing to each; always visible; known identity | The robot measures distance and direction to three known posts at every step |
+| Assumed process noise **Q** | diag(0.01, 0.01, 0.001) on [x, y, theta], added each prediction | How much motion error the filter *budgets* per step |
+| Assumed measurement noise **R** | diag(0.04, 0.0025) — sigma = 0.2 m range, ~3 deg bearing | How noisy the filter *believes* its sensor is |
+| Injected noise (the truth) | Gaussian noise on the controls [v, omega] with covariance alpha·diag(0.01, 0.01), and on the measurements with covariance alpha·R | What the simulator *actually* adds — note the process noise physically enters on the 2-D controls, not the 3-D pose |
+| Mismatch schedule | alpha = 1 (t 1–100) → **5** (101–200) → 1 (201–300) → **3** (301–400) | The sensor silently becomes 5x, then 3x, noisier than the filter believes — the shaded segments. The filter is never told |
+| Filter initialisation | Pose at truth (P0 = 0.001·I3); landmarks at surveyed positions (prior variance 1.0) | The paper's published convention, disclosed in its limitations section |
+| Corrector | Gate threshold tau = 1.45 on the normalised NIS over all visible landmarks (d = 6); when exceeded, gain scaled by s = clamp(1/chi2_global, 0.15, 1); Joseph-form update | Acts only when the innovations are statistically too large for the assumed noise, and scales the gain down in proportion to the excess |
+| Trial selection | Seed 14 = the **median**-improvement trial of the paper's n = 100 run (21.1% vs 20.5% median, 23.2% mean) | Deliberately typical; verify the ranking yourself from `results/regime2_nonstationary/rev1_nonstationary_results.mat` |
+
+One honest footnote: the filter assumes its process noise as an additive 3x3 **Q** on the pose (the common convention in this literature), while the simulator injects it on the 2-D controls — a claimed-versus-injected distinction the paper's limitations section discloses and quantifies via a constant-gain ablation.
+
+</details>
+
 ## Requirements
 
 - MATLAB (tested on a recent release) with the **Statistics and Machine Learning Toolbox** (`chi2inv`, `signrank`, `tinv`)
